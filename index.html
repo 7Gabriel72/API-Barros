@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta CEP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f7f7f7;
+      background-image: url('fundo-site.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat; 
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: medium;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 140px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border: 1.5px solid #888;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    #btnBuscar {
+      background-color: gray;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 8px 24px;
+      font-size: 16px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    #btnBuscar.verde {
+      background-color: green;
+    }
+
+    #btnBuscar.vermelho {
+      background-color: red;
+    }
+
+    #resultado {
+      margin-top: 20px;
+      padding: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fafafa;
+      min-width: 260px;
+      text-align: left;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    h1 {
+      margin-bottom: 30px;
+      text-align: center;
+      color: #e2dede;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Consultar CEP</h1>
+  <div class="form-container">
+    <div class="input-container">
+      <label for="cep-field">Digite o CEP:</label>
+      <input type="text" id="cep-field" placeholder="00000-000">
+    </div>
+    <div class="button-container">
+      <button id="btnBuscar">Buscar</button>
+    </div>
+    <div id="resultado"></div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('#cep-field').mask('00000-000');
+    });
+
+    var botao = document.getElementById("btnBuscar");
+    var divResultado = document.getElementById("resultado");
+
+    botao.addEventListener("click", function() {
+      var cep = document.getElementById("cep-field").value.replace(/\D/g, '');
+
+      if (cep.length !== 8) {
+        botao.classList.remove("verde");
+        botao.classList.add("vermelho");
+        divResultado.innerHTML = "<p>CEP inválido. Digite 8 números.</p>";
+        return; 
+      }
+
+      fetch("https://viacep.com.br/ws/" + cep + "/json/")
+        .then(function(resposta) {
+          return resposta.json();
+        })
+        .then(function(dados) {
+          if (dados.erro) {
+            botao.classList.remove("verde");
+            botao.classList.add("vermelho");
+            divResultado.innerHTML = "<p>CEP não encontrado.</p>";
+          } else {
+            botao.classList.remove("vermelho");
+            botao.classList.add("verde");
+
+            divResultado.innerHTML =
+              "<p><b>Logradouro:</b> " + (dados.logradouro || '-') + "</p>" +
+              "<p><b>Bairro:</b> " + (dados.bairro || '-') + "</p>" +
+              "<p><b>Cidade:</b> " + (dados.localidade || '-') + "</p>" +
+              "<p><b>Estado:</b> " + (dados.uf || '-') + "</p>";
+          }
+        })
+        .catch(function(erro) {
+          botao.classList.remove("verde");
+          botao.classList.add("vermelho");
+          divResultado.innerHTML = "<p>Erro na consulta.</p>";
+        });
+    });
+  </script>
+
+</body>
+</html>
