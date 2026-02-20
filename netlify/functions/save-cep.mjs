@@ -28,7 +28,20 @@ export async function handler(event) {
   }
 
   try {
-    const sql = neon();
+    const connectionString =
+      process.env.DATABASE_URL ||
+      process.env.NETLIFY_DATABASE_URL ||
+      process.env.NETLIFY_DATABASE_URL_UNPOOLED;
+
+    if (!connectionString) {
+      return response(500, {
+        ok: false,
+        error: "Erro interno",
+        detail: "Nenhuma string de conexao encontrada",
+      });
+    }
+
+    const sql = neon(connectionString);
     await sql`
       CREATE TABLE IF NOT EXISTS pessoa (
         codigo_pessoa SERIAL PRIMARY KEY,
