@@ -169,7 +169,8 @@
               if (resultado.ok) {
                 statusEl.innerHTML = "<b>CEP salvo no banco com sucesso.</b>";
               } else {
-                statusEl.innerHTML = "<b>Consulta ok, mas falhou ao salvar no banco.</b>";
+                var detalhe = resultado.detail ? " (" + resultado.detail + ")" : "";
+                statusEl.innerHTML = "<b>Consulta ok, mas falhou ao salvar no banco.</b>" + detalhe;
               }
             })
             .catch(function() {

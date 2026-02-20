@@ -29,10 +29,20 @@ export async function handler(event) {
 
   try {
     const sql = neon();
+    await sql`
+      CREATE TABLE IF NOT EXISTS pessoa (
+        codigo_pessoa SERIAL PRIMARY KEY,
+        cep CHAR(8) NOT NULL
+      )
+    `;
     await sql`INSERT INTO pessoa (cep) VALUES (${cep})`;
     return response(200, { ok: true });
   } catch (error) {
     console.error("Erro ao salvar CEP:", error);
-    return response(500, { ok: false, error: "Erro interno" });
+    return response(500, {
+      ok: false,
+      error: "Erro interno",
+      detail: error instanceof Error ? error.message : String(error),
+    });
   }
 }
