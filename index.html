@@ -101,6 +101,16 @@
       text-align: center;
       color: #e2dede;
     }
+
+    footer {
+      position: fixed;
+      bottom: 16px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: #e2dede;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -116,6 +126,8 @@
     </div>
     <div id="resultado"></div>
   </div>
+
+  <footer>©Todos seus direitos estao reservados</footer>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
@@ -167,7 +179,7 @@
               var statusEl = document.getElementById("status-salvamento");
               if (!statusEl) return;
               if (resultado.ok) {
-                statusEl.innerHTML = "<b>CEP salvo no banco com sucesso.</b>";
+                statusEl.innerHTML = "";
               } else {
                 statusEl.innerHTML = "<b>Consulta ok, mas falhou ao salvar no banco.</b>";
               }
