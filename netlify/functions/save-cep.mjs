@@ -34,11 +34,7 @@ export async function handler(event) {
       process.env.NETLIFY_DATABASE_URL_UNPOOLED;
 
     if (!connectionString) {
-      return response(500, {
-        ok: false,
-        error: "Erro interno",
-        detail: "Nenhuma string de conexao encontrada",
-      });
+      return response(500, { ok: false, error: "Erro interno" });
     }
 
     const sql = neon(connectionString);
@@ -52,10 +48,6 @@ export async function handler(event) {
     return response(200, { ok: true });
   } catch (error) {
     console.error("Erro ao salvar CEP:", error);
-    return response(500, {
-      ok: false,
-      error: "Erro interno",
-      detail: error instanceof Error ? error.message : String(error),
-    });
+    return response(500, { ok: false, error: "Erro interno" });
   }
 }
