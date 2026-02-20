@@ -154,7 +154,29 @@
               "<p><b>Logradouro:</b> " + (dados.logradouro || '-') + "</p>" +
               "<p><b>Bairro:</b> " + (dados.bairro || '-') + "</p>" +
               "<p><b>Cidade:</b> " + (dados.localidade || '-') + "</p>" +
-              "<p><b>Estado:</b> " + (dados.uf || '-') + "</p>";
+              "<p><b>Estado:</b> " + (dados.uf || '-') + "</p>" +
+              "<p id='status-salvamento'><b>Salvando CEP no banco...</b></p>";
+
+            fetch("/.netlify/functions/save-cep", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ cep: cep })
+            })
+            .then(function(resp) { return resp.json(); })
+            .then(function(resultado) {
+              var statusEl = document.getElementById("status-salvamento");
+              if (!statusEl) return;
+              if (resultado.ok) {
+                statusEl.innerHTML = "<b>CEP salvo no banco com sucesso.</b>";
+              } else {
+                statusEl.innerHTML = "<b>Consulta ok, mas falhou ao salvar no banco.</b>";
+              }
+            })
+            .catch(function() {
+              var statusEl = document.getElementById("status-salvamento");
+              if (!statusEl) return;
+              statusEl.innerHTML = "<b>Consulta ok, mas falhou ao salvar no banco.</b>";
+            });
           }
         })
         .catch(function(erro) {
